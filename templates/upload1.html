@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>   
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='graphics.css') }}" type="text/css">
+    <title>CIDEr</title>
+  </head>
+  <body>
+        <header>
+            <div class="header">
+                <div class="column up1 upload" styling="top:20%;">
+                  
+                </div>
+              
+                <div class="column up2 upload">
+                    <h2>Upload your data</h2>
+                </div>
+                
+                <div class="column up1 upload">
+                  <img src="/static/fffact.png" alt="fffact" height="25" width="150" style="position: absolute; padding-top:25px">
+                </div>
+            </div>
+        </header>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+ 
+    <div class='databox'>
+      <form action="/upload1" enctype="multipart/form-data" style="">
+        <input type="file" name="file" accept=".csv,.xls,.xlsx" style="" onchange='{ this.form.submit();}'>
+      </form>
+    </div> 
+
+  </body>
+</html>

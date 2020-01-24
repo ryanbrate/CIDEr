@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+    /*html {scroll-behavior: smooth;} */
+    /* <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> 
+    /*.active {background-color: #FFFFF;} */
+    ::-webkit-scrollbar {background-color: white;
+      -webkit-appearance: none;
+      width: 10px; height:10px;}
+    ::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      background-color:  #00405C80;
+      -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, .5);}
+    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{{ url_for('static', filename='graphics.css') }}" type="text/css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <title>CIDEr</title>  
+  </head>
+
+  <body>
+        <header>
+            <div class="header">
+                <div class="column up1">
+                  <div style ="position:absolute; left: 30px; top:45px;">
+                    <button class="bread ax"><a href="{{url_for('upload_file')}}"> &laquo; Previous</a></button>
+                    <button class="bread"> <a href="/graphics"> Next &raquo;</a> </button>
+                  </div>
+                </div>
+              
+                <div class="column up2">
+                    <h2>Data preview</h2>
+                </div>
+                
+                <div class="column up1">
+                  <img src="/static/fffact.png" alt="fffact" height="25" width="150" style="position: absolute; padding-top:25px">
+                </div>
+            </div>
+        </header>
+    
+    <div class="main-container">
+      <div class="data1">
+        <div class="cont1">
+          <h3>Please make sure the data is loaded correctly</h3>
+          <!-- Column header rows options -->
+          <div>
+            <label>column header rows
+            <form action="/upload2">
+              row 1 to
+                <select size="1" name="row_header_to" onchange='{ this.form.submit();}'>
+                  {% for y in range(1,5) %}
+                    {% if y == row_header_to %}
+                        <option selected value="{{ y }}">{{ y }}</option> 
+                    {% else %} 
+                          <option value="{{ y }}">{{ y }}</option> 
+                    {% endif %}
+                  {% endfor %}
+                </select>
+            </form>
+            </label>
+          </div>
+          <br>
+          <!-- header rows options -->
+          <div>
+            <label class="switch">column header rows
+            <form action="/upload2">
+              {% if column_header_start %}
+                from
+              {% endif %}
+                <select size="1" name="column_header_start" onchange='{ this.form.submit();}'>
+                  {% for y in [None,1] %}
+                    {% if y == column_header_start %}
+                        <option selected value="{{ y }}">{{y}}</option> 
+                    {% else %} 
+                        <option value="{{ y }}">{{y}}</option> 
+                    {% endif %}
+                  {% endfor %}
+              </select>
+              {% if column_header_start %}
+              to
+              <select size="1" name="column_header_to" onchange='{ this.form.submit();}'>
+                {% for y in range(1,5) %}
+                  {% if y == column_header_to %}
+                      <option selected value="{{ y }}">{{ y }}</option> 
+                  {% else %} 
+                      <option value="{{ y }}">{{ y }}</option> 
+                  {% endif %}
+                {% endfor %}
+              </select>
+              {% endif %}
+            </form>
+            </label>
+          </div>
+          <br>
+          <div>
+            <label>Select date column (optional)</label>
+            <form action="/upload2">
+              <select name="year" onchange='{ this.form.submit();}' style="width: 100%;">
+                <option selected="selected">{{year if year else "--Non Selected--"}}</option>
+                  {% for y in columns %}
+                    {% if y == year %}
+                      <option selected value="{{ y }}">{{ y }}</option> 
+                    {% else %} 
+                      <option value="{{ y }}">{{ y }}</option> 
+                    {% endif %}
+                  {% endfor %}
+              </select>
+              <br>
+              <br>
+              {% if year %}
+                year range: {{year_min}} to {{year_max}}
+              {% endif %}
+            </form>
+            </label>
+          </div>
+
+
+        </div>
+      </div>
+      
+      <div class="data2">
+        <div class="cont2">
+          <pre>
+            <div style="position: absolute; display:grid; overflow-y: scroll; overflow-x: scroll ;height: 70%; width: 65%; background-color: white; padding:0px margin:0px;">
+              {%for table in tables%}
+                {{table|safe}}
+              {%endfor%}
+            </div>
+          </pre>
+        </div> 
+      </div>
+    </div>
+  
+  </body>
+</html>

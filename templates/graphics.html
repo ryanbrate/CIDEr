@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <title>CIDEr</title> 
+
+        <meta charset="utf-8">
+        
+        <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-1.3.4.min.css" type="text/css" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='graphics.css') }}" type="text/css">
+
+
+        <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-1.3.4.min.js"></script>
+        <script type="text/javascript" src="html2canvas.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+        <script type="text/javascript">          
+            var myVariable = {{ tab_current | tojson }};           
+        </script>
+
+    </head>
+
+    <body>
+
+        <header>
+            <div class="header">
+                <div class="column">
+                    <form action="/graphics">
+                        <div style ="position:absolute; left: 25px; top:45px;">
+                                <button class="bread" name = "crumb" value = "All Populations">All Populations</button> 
+                            {% for s in crumbs %}
+                                &raquo; <button class="bread act" styling="" name = "crumb" value = {{s.replace(" ", "_____")}}>{{s}}</button>
+                            {% endfor %}
+                        </div> 
+                    </form>
+                </div>
+                
+                <div class="column">
+                    <h2 style='text-align:center'>{{(["All Populations"] + crumbs)[-1]}}</h2>
+                </div>
+                
+                <div class="column up1">
+                  <img src="/static/fffact.png" alt="fffact" height="25" width="150" style="position: absolute; padding-top:25px; right:145px">
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar section -->
+
+        <!-- RHS bar text -->
+        <div style="position: absolute; top:17%; left:70%; right:5%">
+            <p class='sub'>SUB POPULATIONS </p>
+            <p>*sub-populations with outliers are coloured</p>
+        </div>
+
+
+        <!-- RHS bar for sub-pop selection -->
+        {% if subs %}
+            <div style="position: absolute; bottom: 0%; top: 26%; left: 70%; right:5% " class="side-pane"> 
+                <div style="overflow-y: scroll; height: 86%;">
+                    {% for s in subs %}
+                    <ul style="list-style-type:none; width:100%">
+                        <li>
+                            <form action="/graphics">
+                                <span class="dot" style="background-color:{{colours[s]}};"></span>
+                                <button  name = "index" value = {{s.replace(" ", "_____")}} style="background-color:{{colours[s]}};">
+                                    {{s}}
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                    {% endfor %}
+                </div> 
+            </div>
+        {% endif %}
+              
+        <!-- Tab section-->
+        <div>
+        <script type="text/javascript">
+                window.onload=function(){if  (myVariable=='all'){$('#tab1').css({'border-bottom-color':'#484848','font-weight': 'bolder', 'color':'#484848'})}else if(myVariable=='positive'){$('#tab2').css({'border-bottom-color':'#8FBC90','font-weight': 'bolder', 'color':'#8FBC90'})} else if(myVariable=='negative'){$('#tab3').css({'border-bottom-color':'#F08080','font-weight': 'bolder', 'color':'#F08080'})}else{$('#tab1').css({'border-bottom-color':'black','font-weight': 'bolder', 'color':'#484848'})}}
+        </script>
+        <ul>
+            <form action="/graphics">
+                <button class="tab tab1" name="tab" value = "all" id="tab1">
+                    <svg id="svg" display="inline" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 496"><defs><style>.cls-1{fill:#8fbc90;}.cls-2{fill:#f08080;}</style></defs><title>Untitled-2</title><rect class="cls-1" width="496" height="248"/><rect class="cls-2" y="248" width="496" height="248"/></svg> ALL CORRELATIONS ({{totals["total"]}})
+                </button>
+            </form>
+            <form action="/graphics">
+                <button class="tab tab2" name="tab" value = "positive" id="tab2"> 
+                    <svg id="svg" display="inline" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 496"><defs><style>.cls-1{fill:#8fbc90;}</style></defs><title>Untitled-2</title><path class="cls-1" d="M0,0V496H496V0ZM413,290H289V413H206V290H82V207H206V82h83V207H413Z"/></svg> POSITIVE CORRELATIONS ({{totals["pos"]}})
+                </button>
+            </form>
+            <form action="/graphics">
+                <button class="tab tab3" name="tab" value = "negative" id="tab3">
+                    <svg id="svg" display="inline" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 496"><defs><style>.cls-2{fill:#f08080;}</style></defs><title>Untitled-2</title><path class="cls-2" d="M0,0V496H496V0ZM414,290H83V207H414Z"/></svg> NEGATIVE CORRELATIONS ({{totals["neg"]}})
+                </button>
+            </form>
+        </ul>
+        </div> 
+        
+        <!-- Graph -->
+        <div class="graph-box">
+            <div style="position: fixed; bottom: 0%; top: 22%; left:25px; padding: -10px">
+                <div style="overflow-y: scroll; height: 85%;">
+            
+                    {{ script |safe }}
+                    {{ div |safe }}
+            
+                </div>
+            
+            </div>
+        </div>
+        
+        <div class="footer">
+    
+            <!-- year from via dropdown -->
+            <div class="dropdown" style="position: absolute; bottom: 35%; left:30%">
+                {%if year_options%}
+                <form class="dropdown" action="/graphics"> 
+                    <select name="year_from" onchange='{ this.form.submit();}'>
+                        <option selected="selected">{{year_from}}</option>
+                        {% for y in year_from_options %}
+                            {% if y == year_from %}
+                                <option selected value="{{ y }}">{{ y }}</op    tion> 
+                            {% else %} 
+                                <option value="{{ y }}">{{ y }}</option> 
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <select name="year_to" onchange='{ this.form.submit();}' >
+                        <option selected="selected">{{year_to}}</option>
+                        {% for y in year_to_options %}
+                            {% if y == year_to %}
+                                <option selected value="{{ y }}">{{ y }}</option> 
+                            {% else %} 
+                                <option value="{{ y }}">{{ y }}</option> 
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </form>
+                {% endif %}
+            </div>
+            
+            
+
+            <!-- Graph order button -->
+            <div class="dropdown" style="position: absolute; top: 40%; left:60%">
+                <form action="/graphics"> 
+                    <select name="order" onchange='{ this.form.submit();}'>
+                        <option selected="selected">{{order}}</option>
+                        {% for y in order_options %}
+                            {% if y == order %}
+                                <option selected value="{{ y }}">{{ y }}</option> 
+                            {% else %} 
+                                <option value="{{ y }}">{{ y }}</option> 
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Export/Edit buttons -->
+        <div style="position: absolute; bottom:45px; right:145px">
+            <form action="/upload2">
+                <button class="bread" style="min-width:150px;"> Edit Data Set</button>
+            </form>
+        </div>
+
+        <div style="position: absolute; bottom:2%; right:145px;">
+            <input type='button' class="bread" style="min-width:150px;" id='but_screenshot' value='Export Visualisation' onclick='generate();'><br/>
+            <!-- Script -->
+            <script type='text/javascript'>
+                    (function(exports) {
+                  function screenshotPage() {
+                      var wrapper = document.body;
+                      html2canvas(wrapper, {
+                          onrendered: function(canvas) {
+                              canvas.toBlob(function(blob) {
+                                  saveAs(blob, 'CIDEr.png');});}});}
+
+                  function generate() {
+                      screenshotPage();
+                  }
+                  exports.screenshotPage = screenshotPage;
+                  exports.generate = generate;
+              })(window);
+            </script>
+        </div>
+
+    </body>
+</html>
