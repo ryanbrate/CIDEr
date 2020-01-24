@@ -38,15 +38,16 @@ def set_session():
 	session["order"] = "descending" #current view, plot "ascending" or "descending"
 	session["totals"]=[]
 	session["d"]=None
-	session["row_indexes"] = None
+    session["row_indexes"] = None
 
 	#stored for /input
-	session["filename"] = None
+        session["filename"] = None
 
 	#stored  for /input2
 	session["row_header_to"] = 1 #multi index? "multi" or "single"
 	session["column_header_start"] = None
 	session["column_header_to"] = None
+        session["column_header_from"]=0
 
 	session["year"] = None #year (date) column
 
@@ -65,7 +66,7 @@ def upload_file():
 	return render_template('upload1.html')
 
 @app.route('/upload1')
-def read_file():	
+def read_file():
 
 	args = request.args
 
@@ -107,7 +108,7 @@ def show_data():
 	if "column_header_to" in args:
 		session["column_header_to"] = int(args["column_header_to"])
 
-	#generate "row_indices" and "column_indices_backend" 
+	#generate "row_indices" and "column_indices_backend"
 	session["row_indices"] = list(range(0,session["row_header_to"])) #list of row indices (consecutive) representing headers
 
 	if session["column_header_to"]:
@@ -116,36 +117,21 @@ def show_data():
 	else:
 		session["column_indices"] = None
 		session["column_indices_backend"] = [0]
-	
-	#generate dataframe for current variables for 
+
+        #generate dataframe for current variables for
 	filename = session["filename"]
 	ext = os.path.splitext(filename)[1]
 	if ext=='csv':
 		new_file=pd.read_csv(os.path.join(filename),header=session["row_indices"],index_col=session["column_indices"])
 	else:
 		new_file=pd.read_excel(os.path.join(filename),header=session["row_indices"],index_col=session["column_indices"])
-	
+
 	new_file = new_file.reset_index()
 	new_file.columns = pd.MultiIndex.from_tuples(list(enumerate(new_file,1)))
 
 	#generate tables for views
 	tables=[new_file.to_html(classes='data')]
 
-	# ext = os.path.splitext(filename)[1]
-	# if ext=='csv':
-	# 	new_file=pd.read_csv(os.path.join(filename),header=session["row_indices"],index_col=session["column_indices_backend"])
-	# else:
-	# 	new_file=pd.read_excel(os.path.join(filename),header=session["row_indices"],index_col=session["column_indices_backend"])
-	
-	# new_file = new_file.reset_index()
-	# print(new_file.iloc[0])
-
-	# generate year pull down options
-	# if session["row_indices"][-1] > 0:
-	# 	new_file.columns = [' '.join(col) for col in new_file.columns]
-
-	
-	# sheets["time_index"] = new_file.columns.get_loc(sheets[""])
 
 	#get values associated with "year" pulldown
 	if "year" in args:
@@ -154,18 +140,14 @@ def show_data():
 		try:
 			session["year_min"] = min([int(i) for i in new_file.iloc[:,session["year"]-1]])
 			session["year_max"] = max([int(i) for i in new_file.iloc[:,session["year"]-1]])
-		except: 
+		except:
 			pass
 
+        #the max number of sub-population columns
 	columns = range(0,5)
 
-	# print("helloWWWWWWWW\n\n", session["year"])
-	# print(new_file)
-	# print("helloWWWWWWWW\n\n", new_file.columns.get_loc(session["year"]))
-
-	
 	return render_template('upload2.html',
-							tables = tables, 
+							tables = tables,
 							titles=new_file.columns.values,
 							filename=filename,
 
@@ -204,10 +186,10 @@ def graphics():
 		year_options = None
 
 	#set initial values of year_to and year_from ONLY IF year_options != None
-	if session["year_from"] == None and year_options: 
-		session["year_from"] = year_options[0] 
+	if session["year_from"] == None and year_options:
+		session["year_from"] = year_options[0]
 
-	if session["year_to"] == None and year_options: 
+	if session["year_to"] == None and year_options:
 		session["year_to"] = year_options[-1]
 
 	#------------------
@@ -216,22 +198,22 @@ def graphics():
 
 	#get the more recent variable values
 	args = request.args
-	
+
 	#"tab" variables from HTML
 	if "tab" in args:
 		session["tab"] = args["tab"]
 
-	#year variables from 
+	#year variables from
 	if "year_from" in args:
 		session["year_from"] = int(args["year_from"]) ; print("\n\n", session["year_from"],"\n\n")
 		session["d"] = backend.backend(session["filename"],session["row_indices"], session["column_indices_backend"], session["year"], session["year_from"], session["year_to"])
-			
-	#year variables from 
+
+	#year variables from
 	if "year_to" in args:
 		session["year_to"] = int(args["year_to"]) ; print("\n\n", session["year_to"],"\n\n")
 		session["d"] = backend.backend(session["filename"],session["row_indices"], session["column_indices_backend"], session["year"], session["year_from"], session["year_to"] )
 
-	#year variables from 
+	#year variables from
 	if "index" in args:
 		session["index"].append(args["index"].replace("_____", " "))
 
@@ -251,11 +233,11 @@ def graphics():
 
 
 	#output json file for testing
-	with open('data.json', 'w') as f:
-		json.dump(session["d"], f)
+#	with open('data.json', 'w') as f:
+#		json.dump(session["d"], f)
 
 	# Create the plot
-	graph = Graphic()	
+	graph = Graphic()
 	graph.get_data(session["d"], session["index"])
 	graph.generate(session["tab"], by=session["order"])
 
@@ -267,20 +249,20 @@ def graphics():
 	else:
 		year_from_options = None
 		year_to_options = None
-	
-	# generate ordered version of sub-pop dictionary 
+
+	# generate ordered version of sub-pop dictionary
 	colours = graph.get_colours()
 	subs = graph.get_subs()
 	ordered_subs = [s for s in subs if colours[s] != "lightgrey"] + [s for s in subs if colours[s] == "lightgrey"]
-    
+
 	# Embed plot into HTML via Flask Render
 	script, div = components(graph.plot)
-	return render_template("graphics.html", 
-						   script=script, 
-						   div=div, 
+	return render_template("graphics.html",
+						   script=script,
+						   div=div,
 
-						   tab_options = ["all", 
-						   				  "positive", 
+						   tab_options = ["all",
+						   				  "positive",
 										  "negative"],
 						   tab_current = session["tab"],
 
@@ -301,10 +283,10 @@ def graphics():
 
 						   totals = graph.get_totals()
 
-						   #subs = ordered_subs  
+						   #subs = ordered_subs
 						   )
 
-# With debug=True, Flask server will auto-reload 
+# With debug=True, Flask server will auto-reload
 # when there are code changes
 if __name__ == '__main__':
 

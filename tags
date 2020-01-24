@@ -1,0 +1,103 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Graphic	graphics.py	/^class Graphic():$/;"	c
+__init__	graphics.py	/^    def __init__(self):$/;"	m	class:Graphic
+_html2canvas	html2canvas.js	/^var _html2canvas = {},$/;"	v
+_html2canvas.Generate.Gradient	html2canvas.js	/^  _html2canvas.Generate.Gradient = function(src, bounds) {$/;"	f
+_html2canvas.Generate.ListAlpha	html2canvas.js	/^  _html2canvas.Generate.ListAlpha = function(number) {$/;"	f
+_html2canvas.Generate.ListRoman	html2canvas.js	/^  _html2canvas.Generate.ListRoman = function(number) {$/;"	f
+_html2canvas.Generate.parseGradient	html2canvas.js	/^  _html2canvas.Generate.parseGradient = function(css, bounds) {$/;"	f
+_html2canvas.Parse	html2canvas.js	/^_html2canvas.Parse = function (images, options) {$/;"	f
+_html2canvas.Util.BackgroundPosition	html2canvas.js	/^_html2canvas.Util.BackgroundPosition = function( el, bounds, image, imageIndex, backgroundSize ) {$/;"	f
+_html2canvas.Util.BackgroundSize	html2canvas.js	/^_html2canvas.Util.BackgroundSize = function( el, bounds, image, imageIndex ) {$/;"	f
+_html2canvas.Util.Bounds	html2canvas.js	/^_html2canvas.Util.Bounds = function getBounds (el) {$/;"	f
+_html2canvas.Util.Children	html2canvas.js	/^_html2canvas.Util.Children = function( elem ) {$/;"	f
+_html2canvas.Util.Extend	html2canvas.js	/^_html2canvas.Util.Extend = function (options, defaults) {$/;"	f
+_html2canvas.Util.getCSS	html2canvas.js	/^_html2canvas.Util.getCSS = function (el, attribute, index) {$/;"	f
+_html2canvas.Util.parseBackgroundImage	html2canvas.js	/^_html2canvas.Util.parseBackgroundImage = function (value) {$/;"	f
+_html2canvas.Util.resizeBounds	html2canvas.js	/^_html2canvas.Util.resizeBounds = function( current_width, current_height, target_width, target_height, stretch_mode ){$/;"	f
+add_bars	graphics.py	/^    def add_bars(self):$/;"	m	class:Graphic
+add_dots	graphics.py	/^    def add_dots(self, sub, colour, suffix, line_colour, extra_tips = None):$/;"	m	class:Graphic
+annotate_bars	graphics.py	/^    def annotate_bars(self):$/;"	m	class:Graphic
+annotate_corr	graphics.py	/^    def annotate_corr(self):$/;"	m	class:Graphic
+app	app.py	/^app = Flask(__name__)$/;"	v
+appendResult	html2canvas.js	/^    var appendResult = function(){$/;"	f	function:_html2canvas.Util.parseBackgroundImage
+backend	backend.py	/^def backend(file, row_indices, column_indices, time_column=None, start_time=None, end_time=None):$/;"	f
+backgroundBoundsFactory	html2canvas.js	/^function backgroundBoundsFactory( prop, el, bounds, image, imageIndex, backgroundSize ) {$/;"	f
+bezierCurve	html2canvas.js	/^  function bezierCurve(start, startControl, endControl, end) {$/;"	f
+calculateCurvePoints	html2canvas.js	/^  function calculateCurvePoints(bounds, borderRadius, borders) {$/;"	f
+clipBounds	html2canvas.js	/^  function clipBounds(src, dst){$/;"	f	function:_html2canvas.Parse
+colorStops	html2canvas.js	/^            colorStops: []$/;"	p	class:case
+colours_for_subpops	graphics.py	/^    def colours_for_subpops(self):$/;"	m	class:Graphic
+createShape	html2canvas.js	/^  function createShape(ctx, args) {$/;"	f
+decimals	backend.py	/^decimals = 2$/;"	v
+documentHeight	html2canvas.js	/^  function documentHeight () {$/;"	f	function:_html2canvas.Parse
+documentWidth	html2canvas.js	/^  function documentWidth () {$/;"	f	function:_html2canvas.Parse
+drawImage	html2canvas.js	/^  function drawImage (ctx) {$/;"	f
+drawSide	html2canvas.js	/^  function drawSide(borderData, radius1, radius2, outer1, inner1, outer2, inner2) {$/;"	f
+drawText	html2canvas.js	/^  function drawText(currentText, x, y, ctx){$/;"	f	function:_html2canvas.Parse
+elementIndex	html2canvas.js	/^  function elementIndex( el ) {$/;"	f	function:_html2canvas.Parse
+generate	graphics.py	/^    def generate(self, tab="all", by = "descending"):$/;"	m	class:Graphic
+generate	templates/graphics.html	/^                  function generate() {$/;"	f
+getBorderClip	html2canvas.js	/^  function getBorderClip(element, borderPoints, borders, radius, bounds) {$/;"	f
+getBorderData	html2canvas.js	/^  function getBorderData(element) {$/;"	f
+getBorderRadiusData	html2canvas.js	/^  function getBorderRadiusData(element) {$/;"	f
+getBounds	html2canvas.js	/^_html2canvas.Util.Bounds = function getBounds (el) {$/;"	f
+getCSSInt	html2canvas.js	/^  function getCSSInt(element, attribute) {$/;"	f	function:_html2canvas.Parse
+getTextBounds	html2canvas.js	/^  function getTextBounds(state, text, textDecoration, isLast) {$/;"	f	function:_html2canvas.Parse
+get_colours	graphics.py	/^    def get_colours(self):$/;"	m	class:Graphic
+get_data	graphics.py	/^    def get_data(self, d, sub_indices):$/;"	m	class:Graphic
+get_subpop_data	graphics.py	/^    def get_subpop_data(self, d_at_level):$/;"	m	class:Graphic
+get_subs	graphics.py	/^    def get_subs(self):$/;"	m	class:Graphic
+get_totals	graphics.py	/^    def get_totals(self):$/;"	m	class:Graphic
+graphics	app.py	/^def graphics():$/;"	f
+h2cRenderContext	html2canvas.js	/^function h2cRenderContext(width, height) {$/;"	f
+h2clog	html2canvas.js	/^function h2clog(a) {$/;"	f
+lerp	html2canvas.js	/^    var lerp = function (a, b, t) {$/;"	f	function:bezierCurve
+listItemText	html2canvas.js	/^  function listItemText(element, type) {$/;"	f	function:_html2canvas.Parse
+listPosition	html2canvas.js	/^  function listPosition (element, val) {$/;"	f	function:_html2canvas.Parse
+loadImage	html2canvas.js	/^  function loadImage (src){$/;"	f	function:_html2canvas.Parse
+new_list	graphics.py	/^    def new_list(self,reference_list,criteria = "", apply = None):$/;"	m	class:Graphic
+noLetterSpacing	html2canvas.js	/^  function noLetterSpacing(letter_spacing) {$/;"	f	function:_html2canvas.Parse
+order	graphics.py	/^    def order(self, by="descending"):$/;"	m	class:Graphic
+outliers	graphics.py	/^    def outliers(self,dataset):$/;"	m	class:Graphic
+parseBorders	html2canvas.js	/^  function parseBorders(element, bounds, borders){$/;"	f
+parseCorner	html2canvas.js	/^  function parseCorner(borderArgs, radius1, radius2, corner1, corner2, x, y) {$/;"	f
+reGradients	html2canvas.js	/^  var reGradients = [$/;"	v
+read_file	app.py	/^def read_file():	$/;"	f
+renderBorders	html2canvas.js	/^  function renderBorders(ctx, borderArgs, color) {$/;"	f
+renderFormValue	html2canvas.js	/^  function renderFormValue (el, bounds, stack){$/;"	f
+renderImage	html2canvas.js	/^  function renderImage(ctx, element, image, bounds, borders) {$/;"	f
+renderListItem	html2canvas.js	/^  function renderListItem(element, stack, elBounds) {$/;"	f	function:_html2canvas.Parse
+renderRect	html2canvas.js	/^  function renderRect (ctx, x, y, w, h, bgcolor) {$/;"	f	function:_html2canvas.Parse
+renderText	html2canvas.js	/^  function renderText(el, textNode, stack) {$/;"	f	function:_html2canvas.Parse
+renderTextDecoration	html2canvas.js	/^  function renderTextDecoration(ctx, text_decoration, bounds, metrics, color) {$/;"	f	function:_html2canvas.Parse
+reset	graphics.py	/^    def reset(self):$/;"	m	class:Graphic
+screenshotPage	templates/graphics.html	/^                  function screenshotPage() {$/;"	f
+session	app.py	/^session = {}$/;"	v
+setTextVariables	html2canvas.js	/^  function setTextVariables(ctx, el, text_decoration, color) {$/;"	f	function:_html2canvas.Parse
+setZ	html2canvas.js	/^  function setZ(zIndex, parentZ){$/;"	f
+set_session	app.py	/^def set_session():$/;"	f
+show_data	app.py	/^def show_data():$/;"	f
+textRangeBounds	html2canvas.js	/^  function textRangeBounds(text, textNode, textOffset) {$/;"	f	function:_html2canvas.Parse
+textTransform	html2canvas.js	/^  function textTransform (text, transform) {$/;"	f	function:_html2canvas.Parse
+textWrapperBounds	html2canvas.js	/^  function textWrapperBounds(oldTextNode) {$/;"	f	function:_html2canvas.Parse
+threshold	backend.py	/^threshold = 0$/;"	v
+toPX	html2canvas.js	/^  function toPX( attribute, val ) {$/;"	f	function:_html2canvas.Util.getCSS
+type	html2canvas.js	/^            type: 'circle',$/;"	p	class:case
+type	html2canvas.js	/^            type: 'linear',$/;"	p	class:case
+type	html2canvas.js	/^            type: m1[2] === 'radial' ? 'circle' : m1[2], \/\/ TODO: Add radial gradient support for older mozilla definitions$/;"	p	class:case
+upload_file	app.py	/^def upload_file():$/;"	f
+x0	html2canvas.js	/^            x0: 0,$/;"	p	class:case
+x0	html2canvas.js	/^            x0: null,$/;"	p	class:case
+x1	html2canvas.js	/^            x1: 0,$/;"	p	class:case
+x1	html2canvas.js	/^            x1: bounds.width,$/;"	p	class:case
+x1	html2canvas.js	/^            x1: null,$/;"	p	class:case
+y0	html2canvas.js	/^            y0: 0,$/;"	p	class:case
+y0	html2canvas.js	/^            y0: null,$/;"	p	class:case
+y1	html2canvas.js	/^            y1: 0,$/;"	p	class:case
+y1	html2canvas.js	/^            y1: null,$/;"	p	class:case

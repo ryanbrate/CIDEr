@@ -66,7 +66,7 @@
                         <li>
                             <form action="/graphics">
                                 <span class="dot" style="background-color:{{colours[s]}};"></span>
-                                <button  name = "index" value = {{s.replace(" ", "_____")}} style="background-color:{{colours[s]}};">
+                                <button  class = "RHS" name = "index" value = {{s.replace(" ", "_____")}} style="background-color:{{colours[s]}};">
                                     {{s}}
                                 </button>
                             </form>
@@ -117,21 +117,21 @@
         <div class="footer">
     
             <!-- year from via dropdown -->
-            <div class="dropdown" style="position: absolute; bottom: 35%; left:30%">
+            <div class="dropdown" style="position: absolute; bottom: 55%; left:37.4%">
                 {%if year_options%}
                 <form class="dropdown" action="/graphics"> 
+                <label style="color:#484848; font-size:12px; font-family:'arial'">SELECTED DATASET RANGE: FROM</label>
                     <select name="year_from" onchange='{ this.form.submit();}'>
-                        <option selected="selected">{{year_from}}</option>
                         {% for y in year_from_options %}
                             {% if y == year_from %}
-                                <option selected value="{{ y }}">{{ y }}</op    tion> 
+                                <option selected value="{{ y }}">{{ y }}</option> 
                             {% else %} 
                                 <option value="{{ y }}">{{ y }}</option> 
                             {% endif %}
                         {% endfor %}
                     </select>
+                    <label style="color:#484848; font-size:12px; font-family:'arial'">TO</label>
                     <select name="year_to" onchange='{ this.form.submit();}' >
-                        <option selected="selected">{{year_to}}</option>
                         {% for y in year_to_options %}
                             {% if y == year_to %}
                                 <option selected value="{{ y }}">{{ y }}</option> 
@@ -147,10 +147,10 @@
             
 
             <!-- Graph order button -->
-            <div class="dropdown" style="position: absolute; top: 40%; left:60%">
+            <div class="dropdown" style="position: absolute; top: 55%; left:49.5%">
                 <form action="/graphics"> 
+                    <label style="color:#484848; font-size:12px; font-family:'arial'">CHART ORDER</label>
                     <select name="order" onchange='{ this.form.submit();}'>
-                        <option selected="selected">{{order}}</option>
                         {% for y in order_options %}
                             {% if y == order %}
                                 <option selected value="{{ y }}">{{ y }}</option> 

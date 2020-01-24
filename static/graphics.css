@@ -354,3 +354,7 @@ table.dataframe th {
   border-radius: 50%;
   display: inline-block;
 }
+
+.RHS:hover {
+  opacity: 0.7    
+}

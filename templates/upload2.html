@@ -98,12 +98,11 @@
             <label>Select date column (optional)</label>
             <form action="/upload2">
               <select name="year" onchange='{ this.form.submit();}' style="width: 100%;">
-                <option selected="selected">{{year if year else "--Non Selected--"}}</option>
                   {% for y in columns %}
                     {% if y == year %}
-                      <option selected value="{{ y }}">{{ y }}</option> 
+                      <option selected value="{{ y }}">{{ y if y!= 0 else "--None Selected--"}}</option> 
                     {% else %} 
-                      <option value="{{ y }}">{{ y }}</option> 
+                      <option value="{{ y }}">{{ y if y!=0 else "--None Selected--" }}</option> 
                     {% endif %}
                   {% endfor %}
               </select>
