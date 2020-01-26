@@ -68,7 +68,7 @@ outliers	graphics.py	/^    def outliers(self,dataset):$/;"	m	class:Graphic
 parseBorders	html2canvas.js	/^  function parseBorders(element, bounds, borders){$/;"	f
 parseCorner	html2canvas.js	/^  function parseCorner(borderArgs, radius1, radius2, corner1, corner2, x, y) {$/;"	f
 reGradients	html2canvas.js	/^  var reGradients = [$/;"	v
-read_file	app.py	/^def read_file():	$/;"	f
+read_file	app.py	/^def read_file():$/;"	f
 renderBorders	html2canvas.js	/^  function renderBorders(ctx, borderArgs, color) {$/;"	f
 renderFormValue	html2canvas.js	/^  function renderFormValue (el, bounds, stack){$/;"	f
 renderImage	html2canvas.js	/^  function renderImage(ctx, element, image, bounds, borders) {$/;"	f

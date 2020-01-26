@@ -48,10 +48,10 @@ class Graphic():
 
         self.totals = {}
 
-        self.number_of_entries = None 
-        self.min_corr_abs = None 
+        self.number_of_entries = None
+        self.min_corr_abs = None
 
-        self.source = None 
+        self.source = None
 
 
     def get_data(self, d, sub_indices):
@@ -118,7 +118,7 @@ class Graphic():
         #get number of pos, neg and total correlations 
         self.totals = {"pos":0, "neg":0, "total":0}
         for c in self.data["corr"]:
-            if c >= 0: 
+            if c >= 0:
                 self.totals["pos"] += 1
             elif c<0:
                 self.totals["neg"] += 1
@@ -151,7 +151,7 @@ class Graphic():
             #corr_abs values for dots:
             for s in self.subpops:
                 self.data[s+"_abs"] = self.new_list(self.data[s], criteria="", apply = "abs" )
-            
+
             #create s_outlier and s_non_outlier
             #
 
@@ -162,7 +162,7 @@ class Graphic():
 
             #iterate through each variable pair
             for index in range(0,self.number_of_entries):
-                
+
                 #assemble list of self.data[s][index] for each s to determine the outliers
                 subpop_corrs_for_variable_pair = [self.data[s][index] for s in self.subpops] #these values could all be "NA"
 
@@ -170,9 +170,9 @@ class Graphic():
                     lb, ub = self.outliers(subpop_corrs_for_variable_pair)
                 else:
                     lb = None; ub = None
-                
-                for s in self.subpops: 
-                    item = self.data[s][index]     
+
+                for s in self.subpops:
+                    item = self.data[s][index]
                     if item == "NA":
                         self.data[s+"_outlier"].append("NA")
                         self.data[s+"_non_outlier"].append("NA")
@@ -208,7 +208,7 @@ class Graphic():
         new = []
         for item in reference_list:
             if item != "NA":
-                if eval(str(item) + criteria): 
+                if eval(str(item) + criteria):
                     if apply == None:
                         to_append = item
                     else:
@@ -217,8 +217,8 @@ class Graphic():
                 else:
                     new.append("NA")
             else:
-                new.append("NA") 
-                
+                new.append("NA")
+
         return new
 
     def colours_for_subpops(self):
@@ -251,8 +251,8 @@ class Graphic():
 
         q1, q3 = np.percentile(dataset,[25,75])
         iqr = q3 - q1
-        lowerbound = q1 -(1.5 * iqr) 
-        upperbound = q3 +(1.5 * iqr) 
+        lowerbound = q1 -(1.5 * iqr)
+        upperbound = q3 +(1.5 * iqr)
 
         return (lowerbound, upperbound)
 
@@ -274,11 +274,11 @@ class Graphic():
         self.data["y"] = [-i+1 for i in self.data["rank"]]
         self.order(by=by)
 
-        self.source = ColumnDataSource(data=self.data) 
+        self.source = ColumnDataSource(data=self.data)
 
         ##setup basic plot
-        self.plot = figure(plot_width=850, 
-                           plot_height=self.number_of_entries*90, 
+        self.plot = figure(plot_width=850,
+                           plot_height=self.number_of_entries*90,
                            toolbar_location=None,
                            tools ="",
                            y_range=(-1*self.number_of_entries, 1),
@@ -337,22 +337,22 @@ class Graphic():
                 colour = "darkseagreen"
 
             self.data["bar_colours"].append(colour)
-        
+
         self.source = ColumnDataSource(data=self.data)
 
         # self.plot.hbar(y=-1*index, height=self.bar_scale, left=self.plot_start,right=[abs(c)], color=colour) 
-        self.plot.hbar(y="y", height=self.bar_scale, left=self.plot_start,right="corr_abs", color="bar_colours", source = self.source) 
+        self.plot.hbar(y="y", height=self.bar_scale, left=self.plot_start,right="corr_abs", color="bar_colours", source = self.source)
 
 
 
     def add_dots(self, sub, colour, suffix, line_colour, extra_tips = None):
         '''
             return the Hovertool object and renderer object for plotting sub-population corr dots with tooltips
-        
+
         '''
         #reference example
         #https://github.com/bokeh/bokeh/blob/f76ccc44fb39007743ffbe71659b282759915653/examples/glyphs/data_tables.py
-        
+
         #outer line colour indicates whether sup-population correlation pos or neg
 
 
@@ -363,7 +363,7 @@ class Graphic():
             return HoverTool(renderers=[renderer], tooltips=[(sub, "@{" + sub + "}" + extra_tips)]), renderer
         else:
             return HoverTool(renderers=[renderer], tooltips=[(sub, "@{" + sub + "}")]), renderer
-        
+
 
     def annotate_bars(self):
         '''
@@ -373,13 +373,13 @@ class Graphic():
         #plot the annotations
         labels1 = LabelSet(x='x_annotations', y='y', text='annotation1', text_font_size = "8pt", level='overlay',
               x_offset=0, y_offset=32, source=self.source, render_mode="canvas")
-        
+
         labels2 = LabelSet(x='x_annotations', y='y', text='annotation2', text_font_size = "8pt",level='overlay',
               x_offset=0, y_offset=22, source=self.source, render_mode='canvas')
 
         labels3 = LabelSet(x=0, y='y', text="rank", text_font_size = "8pt",level='overlay',
               x_offset=-25 , y_offset=-5 , source=self.source, render_mode='canvas')
-        
+
         self.plot.add_layout(labels1)
         self.plot.add_layout(labels2)
         self.plot.add_layout(labels3)
@@ -393,7 +393,7 @@ class Graphic():
               x_offset=4, y_offset=9, source=self.source, render_mode='canvas')
 
         self.plot.add_layout(labels)
-        
+
     def order(self, by="descending"):
         '''
             re-assign self.data["y"] values based on self.data["corr"] values
@@ -403,23 +403,23 @@ class Graphic():
 
         #find row order based on self.data["corr_abs"]
         if by == "descending":
-            rows = [x for _, x in sorted(zip(self.data["corr_abs"],rows), reverse = True)] 
+            rows = [x for _, x in sorted(zip(self.data["corr_abs"],rows), reverse = True)]
         elif by == "ascending":
-            rows = [x for _, x in sorted(zip(self.data["corr_abs"],rows), reverse = False)] 
+            rows = [x for _, x in sorted(zip(self.data["corr_abs"],rows), reverse = False)]
 
         #assign self.data["rank values"] accordingly
         for index,i in enumerate(rows):
             self.data["rank"][i] = index + 1
         self.data["y"] = [-i+1 for i in self.data["rank"]]
 
-        
+
         self.source = ColumnDataSource(data=self.data)
 
     def get_subs(self):
         '''
             return a list of sub-populations 1 layer deep wrt current view and a list of associated colours
         '''
-      
+
         return self.subpops
 
 
@@ -431,5 +431,5 @@ class Graphic():
     def get_totals(self):
 
         return self.totals
-        
+
 
