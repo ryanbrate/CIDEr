@@ -233,8 +233,8 @@ def graphics():
 
 
     #output json file for testing
-#	with open('data.json', 'w') as f:
-#		json.dump(session["d"], f)
+    with open('data.json', 'w') as f:
+        json.dump(session["d"], f)
 
     # Create the plot
     graph = Graphic()
