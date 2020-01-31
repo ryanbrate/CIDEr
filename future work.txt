@@ -1,0 +1,12 @@
+official future work:
+
+*backend:
+    * tidy up the handling of session variables: switch from user-defined dict to flask session module
+        (in order to improve the user-interaction if accidentally user browser rather than interface buttons)
+
+*frontend
+    * be able to order the charts by outlier presence in addition to strength of association by variable
+    * be able to select/ search for a variable in order to limit 
+
+    * pullout sidebar options: (to limit clutter):
+        * be able to disregard variable pair combinations 

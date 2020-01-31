@@ -15,38 +15,37 @@ from pathlib import Path
 
 #imports for "input2"
 import pandas as pd
-from flask import render_template,request,redirect,url_for #, session
+from flask import render_template,request,redirect,url_for#, session
 import os
+from pathlib import Path
 import numpy as np
-
+import copy
 
 app = Flask(__name__)
 app.secret_key = 'super secret key'
 session = {}
 
-def set_session():
+def reset_session():
     '''
-        set/reset to default session values
+       sets default values for session variables (only for those variables that require it)
     '''
     session.clear()
-
+    
     #stored for /graphics
     session["tab"] = None #graphic view tab; i.e. all, positive or negative only
     session["year_from"] = None
     session["year_to"] = None
-    session["index"] = [] #stored the current graphic view indices as a list e.g. ["Amsterdam", "West"]
+    session["indices"] = [] #stored the current graphic view indices as a list e.g. ["Amsterdam", "West"]
     session["order"] = "descending" #current view, plot "ascending" or "descending"
     session["totals"]=[]
     session["d"]=None
     session["row_indexes"] = None
 
-    #stored for /input
-    session["filename"] = None
-
+    
     #stored  for /input2
-    session["row_header_to"] = 1 #multi index? "multi" or "single"
-    session["column_header_start"] = None
-    session["column_header_to"] = None
+    session["row_header_to"] = 1 #i.e. defaults to single index only
+    session["column_header_start"] = "No subpopulations"#i.e. defaults to there being no sub-populations whatsoever
+    session["column_header_to"] = None 
     session["column_header_from"]=0
 
     session["year"] = None #year (date) column
@@ -60,19 +59,19 @@ def set_session():
 @app.route('/')
 def upload_file():
 
-    #reset session variables
-    set_session()
-
     return render_template('upload1.html')
 
 @app.route('/upload1')
 def read_file():
+    '''get filename and store as session variable'''
+     
+    reset_session()
 
+    #read in the selected filename 
     args = request.args
-
     if "file" in args:
-        session["filename"]=os.path.abspath(args["file"])
-
+        session["file"] = args["file"]
+        
     return show_data()
 
 #-----------------------
@@ -81,58 +80,54 @@ def read_file():
 
 @app.route('/upload2')
 def show_data():
+    
+    #
+    #acknowledge a change in page variables (row_header_to, column_header_start or column_header_to, year) 
+    #
 
-    #HTML variables
     args = request.args
+    
+    #handle a change to the number or row indices
     if "row_header_to" in args:
         session["row_header_to"] = int(args["row_header_to"])
-
-        #update the row headers
-        session["row_indices"] = list(range(0,session["row_header_to"]))
 
         #reset session["year"]
         session["year"] = None
 
+    #handle a change to "column_header_start" page var. (i.e. first column index)
     if "column_header_start" in args:
-        if args["column_header_start"] != "None":
-            session["column_header_start"] = args["column_header_start"] if args["column_header_start"]==None else int(args["column_header_start"])
-        else:
-            session["column_header_start"] = None
-
-        #if != None (i.e. ==1), also set session["column_header_to"] = 1
-        if session["column_header_start"]:
+        if args["column_header_start"] != "No subpopulations":
+            session["column_header_start"] = 1
             session["column_header_to"] = 1
         else:
+            session["column_header_start"] = "No subpopulations"
             session["column_header_to"] =  None
-
+    
+    #handle a change in "column_header_to" page var (i.e. final column index) 
     if "column_header_to" in args:
         session["column_header_to"] = int(args["column_header_to"])
-
-    #generate "row_indices" and "column_indices_backend"
+    
+    
+    #
+    # populate the lists of column/ row indices from the input variables
+    #
+    
+    #row indices (i.e. single row -> [0], two rows -> [0,1])
     session["row_indices"] = list(range(0,session["row_header_to"])) #list of row indices (consecutive) representing headers
-
-    if session["column_header_to"]:
-        session["column_indices"] = list(range(0,session["column_header_to"])) #list of row indices (consecutive) representing headers
+    
+    #column indices (i.e. no subpops -> indices = None, indices_backend=[0], 1 subpop -> indices = [0], indices_backend = [0,1])
+    if session["column_header_start"] != "No subpopulations":
+        session.pop("column_indices_backend", None) 
         session["column_indices_backend"] = list(range(0,session["column_header_to"]+1))
     else:
-        session["column_indices"] = None
         session["column_indices_backend"] = [0]
-
-        #generate dataframe for current variables for
-    filename = session["filename"]
-    ext = os.path.splitext(filename)[1]
-    if ext=='csv':
-        new_file=pd.read_csv(os.path.join(filename),header=session["row_indices"],index_col=session["column_indices"])
-    else:
-        new_file=pd.read_excel(os.path.join(filename),header=session["row_indices"],index_col=session["column_indices"])
-
+   
+    #generate dataframe for current variables for
+    new_file=pd.read_excel(session["file"],header=session["row_indices"],index_col=[0])
+    
     new_file = new_file.reset_index()
     new_file.columns = pd.MultiIndex.from_tuples(list(enumerate(new_file,1)))
-
-    #generate tables for views
-    tables=[new_file.to_html(classes='data')]
-
-
+    
     #get values associated with "year" pulldown
     if "year" in args:
         session["year"] = int(args["year"])
@@ -143,13 +138,17 @@ def show_data():
         except:
             pass
 
-        #the max number of sub-population columns
+
+    #generate tables for views
+    tables=[new_file.to_html(classes='data', index=False)]
+
+    
+    #the max number of sub-population columns
     columns = range(0,5)
 
     return render_template('upload2.html',
                             tables = tables,
                             titles=new_file.columns.values,
-                            filename=filename,
 
                             columns = columns,
                             year = session["year"],
@@ -166,22 +165,14 @@ def show_data():
 # /graphics
 #---------------
 
-# session = {"tab":None, "year_from":None, "year_to":None, "index":[], "order":"descending", "totals":[], "d":None}
 
 @app.route('/graphics')
 def graphics():
 
-    #-----------------
-    #If year range if know from a selected column in /upload 2; set year_options, session["year_from"] and session["year_to"]
-    #otherwise these variables = None, if date data not known, this is hidden from plot options
-    #-----------------
-
-    #get the limiting years wrt. the data set (from /upload2 i.e. def show_data)
-    start_time = session["year_min"]
-    end_time = session["year_max"]
-
-    if start_time and end_time:
-        year_options = list(range(start_time, end_time+1))
+    
+    #create the range of possible years from selected year column max and min values 
+    if session["year_min"] and session["year_max"]:
+        year_options = list(range(session["year_min"],session["year_max"]+1))
     else:
         year_options = None
 
@@ -193,10 +184,9 @@ def graphics():
         session["year_to"] = year_options[-1]
 
     #------------------
-    #get variables form HTML
+    #update variables from HTML
     #------------------
 
-    #get the more recent variable values
     args = request.args
 
     #"tab" variables from HTML
@@ -205,31 +195,34 @@ def graphics():
 
     #year variables from
     if "year_from" in args:
-        session["year_from"] = int(args["year_from"]) ; print("\n\n", session["year_from"],"\n\n")
-        session["d"] = backend.backend(session["filename"],session["row_indices"], session["column_indices_backend"], session["year"], session["year_from"], session["year_to"])
+        session["year_from"] = int(args["year_from"])
+        session["d"] = backend.backend(session["file"],session["row_indices"], session["column_indices_backend"], session["year"], session["year_from"], session["year_to"])
 
     #year variables from
     if "year_to" in args:
-        session["year_to"] = int(args["year_to"]) ; print("\n\n", session["year_to"],"\n\n")
-        session["d"] = backend.backend(session["filename"],session["row_indices"], session["column_indices_backend"], session["year"], session["year_from"], session["year_to"] )
+        session["year_to"] = int(args["year_to"])
+        session["d"] = backend.backend(session["file"],session["row_indices"], session["column_indices_backend"], session["year"], session["year_from"], session["year_to"] )
+
 
     #year variables from
     if "index" in args:
-        session["index"].append(args["index"].replace("_____", " "))
-
+        temp = args["index"].replace("_____", " ")
+        session["indices"].append(temp)
+        print("\n\n", session["indices"], "\n\n")
+    
     if "crumb" in args:
         if args["crumb"] == "All Populations":
-            session["index"] = []
+            session["indices"] = []
         else:
-            r = session["index"].index(args["crumb"].replace("_____", " "))
-            session["index"] = session["index"][0:r+1]
+            r = session["indices"].index(args["crumb"].replace("_____", " ")) 
+            session["indices"] = session["indices"][0:r+1]
 
     if "order" in args:
         session["order"] = args["order"]
 
     #get data from backend
     if not session["d"]:
-        session["d"] = backend.backend(session["filename"],session["row_indices"], session["column_indices_backend"], session["year"], session["year_from"], session["year_to"])
+        session["d"] = backend.backend(session["file"],session["row_indices"], session["column_indices_backend"], session["year"], session["year_from"], session["year_to"])
 
 
     #output json file for testing
@@ -238,11 +231,10 @@ def graphics():
 
     # Create the plot
     graph = Graphic()
-    graph.get_data(session["d"], session["index"])
+    graph.get_data(session["d"], session["indices"])
     graph.generate(session["tab"], by=session["order"])
 
     #generate extra variables
-
     if year_options:
         year_from_options = year_options[0:year_options.index(int(session["year_to"]))+1]
         year_to_options = year_options[year_options.index(int(session["year_from"])):]
@@ -254,6 +246,8 @@ def graphics():
     colours = graph.get_colours()
     subs = graph.get_subs()
     ordered_subs = [s for s in subs if colours[s] != "lightgrey"] + [s for s in subs if colours[s] == "lightgrey"]
+
+
 
     # Embed plot into HTML via Flask Render
     script, div = components(graph.plot)
@@ -274,7 +268,7 @@ def graphics():
                            year_to = session["year_to"],
 
                            subs = ordered_subs,
-                           crumbs = session["index"], #navigation index level as list
+                           crumbs = session["indices"], #navigation index level as list
 
                            order = session["order"],
                            order_options = ["ascending", "descending"],
@@ -289,5 +283,4 @@ def graphics():
 # With debug=True, Flask server will auto-reload
 # when there are code changes
 if __name__ == '__main__':
-
     app.run(port=5000, debug=True)

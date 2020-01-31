@@ -46,7 +46,7 @@
           <h3>Please make sure the data is loaded correctly</h3>
           <!-- Column header rows options -->
           <div>
-            <label>column header rows
+            <label>row indices
             <form action="/upload2">
               row 1 to
                 <select size="1" name="row_header_to" onchange='{ this.form.submit();}'>
@@ -64,13 +64,13 @@
           <br>
           <!-- header rows options -->
           <div>
-            <label class="switch">column header rows
+            <label class="switch">subpopulations
             <form action="/upload2">
-              {% if column_header_start %}
+              {% if column_header_start!="No subpopulations" %}
                 from
               {% endif %}
-                <select size="1" name="column_header_start" onchange='{ this.form.submit();}'>
-                  {% for y in [None,1] %}
+                <select size="1" name="column_header_start" onchange='{ this.form.submit();}'> 
+                  {% for y in ["No subpopulations",1] %}
                     {% if y == column_header_start %}
                         <option selected value="{{ y }}">{{y}}</option> 
                     {% else %} 
@@ -78,7 +78,7 @@
                     {% endif %}
                   {% endfor %}
               </select>
-              {% if column_header_start %}
+              {% if column_header_start!="No subpopulations" %}
               to
               <select size="1" name="column_header_to" onchange='{ this.form.submit();}'>
                 {% for y in range(1,5) %}
