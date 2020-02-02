@@ -225,9 +225,9 @@ def graphics():
         session["d"] = backend.backend(session["file"],session["row_indices"], session["column_indices_backend"], session["year"], session["year_from"], session["year_to"])
 
 
-    #output json file for testing
-    with open('data.json', 'w') as f:
-        json.dump(session["d"], f)
+   #  #output json file for testing
+    # with open('data.json', 'w') as f:
+        # json.dump(session["d"], f)
 
     # Create the plot
     graph = Graphic()

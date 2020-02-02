@@ -51,7 +51,6 @@ getCSSInt	html2canvas.js	/^  function getCSSInt(element, attribute) {$/;"	f	func
 getTextBounds	html2canvas.js	/^  function getTextBounds(state, text, textDecoration, isLast) {$/;"	f	function:_html2canvas.Parse
 get_colours	graphics.py	/^    def get_colours(self):$/;"	m	class:Graphic
 get_data	graphics.py	/^    def get_data(self, d, sub_indices):$/;"	m	class:Graphic
-get_subpop_data	graphics.py	/^    def get_subpop_data(self, d_at_level):$/;"	m	class:Graphic
 get_subs	graphics.py	/^    def get_subs(self):$/;"	m	class:Graphic
 get_totals	graphics.py	/^    def get_totals(self):$/;"	m	class:Graphic
 graphics	app.py	/^def graphics():$/;"	f
@@ -67,6 +66,9 @@ order	graphics.py	/^    def order(self, by="descending"):$/;"	m	class:Graphic
 outliers	graphics.py	/^    def outliers(self,dataset):$/;"	m	class:Graphic
 parseBorders	html2canvas.js	/^  function parseBorders(element, bounds, borders){$/;"	f
 parseCorner	html2canvas.js	/^  function parseCorner(borderArgs, radius1, radius2, corner1, corner2, x, y) {$/;"	f
+populate_dot_basic	graphics.py	/^    def populate_dot_basic(self, d_at_level):$/;"	m	class:Graphic
+populate_dot_data	graphics.py	/^    def populate_dot_data(self, d_at_level):$/;"	m	class:Graphic
+populate_dot_outliers	graphics.py	/^    def populate_dot_outliers(self, d_at_level):$/;"	m	class:Graphic
 reGradients	html2canvas.js	/^  var reGradients = [$/;"	v
 read_file	app.py	/^def read_file():$/;"	f
 renderBorders	html2canvas.js	/^  function renderBorders(ctx, borderArgs, color) {$/;"	f
@@ -77,11 +79,11 @@ renderRect	html2canvas.js	/^  function renderRect (ctx, x, y, w, h, bgcolor) {$/
 renderText	html2canvas.js	/^  function renderText(el, textNode, stack) {$/;"	f	function:_html2canvas.Parse
 renderTextDecoration	html2canvas.js	/^  function renderTextDecoration(ctx, text_decoration, bounds, metrics, color) {$/;"	f	function:_html2canvas.Parse
 reset	graphics.py	/^    def reset(self):$/;"	m	class:Graphic
+reset_session	app.py	/^def reset_session():$/;"	f
 screenshotPage	templates/graphics.html	/^                  function screenshotPage() {$/;"	f
 session	app.py	/^session = {}$/;"	v
 setTextVariables	html2canvas.js	/^  function setTextVariables(ctx, el, text_decoration, color) {$/;"	f	function:_html2canvas.Parse
 setZ	html2canvas.js	/^  function setZ(zIndex, parentZ){$/;"	f
-set_session	app.py	/^def set_session():$/;"	f
 show_data	app.py	/^def show_data():$/;"	f
 textRangeBounds	html2canvas.js	/^  function textRangeBounds(text, textNode, textOffset) {$/;"	f	function:_html2canvas.Parse
 textTransform	html2canvas.js	/^  function textTransform (text, transform) {$/;"	f	function:_html2canvas.Parse

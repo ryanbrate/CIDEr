@@ -1,7 +1,6 @@
 #Written by RJB 2019
 
 from bokeh.plotting import figure, show, output_file #basic plots
-from bokeh.models.widgets import RangeSlider #time range slider
 from bokeh.layouts import column, gridplot, widgetbox, Spacer
 from bokeh.models import Label, LabelSet, ColumnDataSource, HoverTool, Circle, GlyphRenderer, HBar
 from bokeh.io import curdoc
@@ -16,23 +15,25 @@ class Graphic():
     '''
 
     def __init__(self):
+        '''initialise object instance variables'''
 
         #data
-        self.data = {}#data store wrt current view
-        self.subpops = []
-        self.colours = {}
+        self.data = {} #data store wrt current view
+                        
+        self.subpops = [] #list of sub-populations wrt. current view level
+        self.colours = {} #dictionary of colours assigned to current views' subpops (non-outliers are assigned "lightgrey")
 
-        self.totals = {}
+        self.totals = {} #a dictionary storing the number of 
 
-        self.number_of_entries = None
-        self.min_corr_abs = None
+        self.number_of_entries = None #number of pairs in current view
+        self.min_corr_abs = None #value of minimum absolute 
 
-        self.source = None #data as bokeh ColumnDataSource object
+        self.source = None #self.data as bokeh ColumnDataSource object
 
         #basic plot/ output setup
-        self.output = output_file("graphic.html")
-        self.plot = None
-        self.plot_start = 0
+        self.output = output_file("graphic.html")  
+        self.plot = None #the Bokeh graphics object
+        self.plot_start = 0 #starting x value for all bars
 
         #plot properties
         self.bar_scale = 0.5 #relative scale of bars
@@ -58,7 +59,7 @@ class Graphic():
         '''
             populate self.data, i.e. the dictionary storing the current plot info
             Args:
-                d:               A complete dictionary of correlation data (structure below), corresponding to a specific year period
+                d:               A complete dictionary of correlation data (structure below), corresponding to a specific year period (from backend.py)
                 sub_indices:     a list of sub-indices representing the information level of the current view
         '''
 
@@ -88,7 +89,7 @@ class Graphic():
         #Args: d = base dictionary, s = list of sub-indices at which to return dict e.g. sub_indices = ["Amsterdam", "zuid"]
         get_sub_index = lambda d, sub_indices=[]: d if len(sub_indices) == 0 else get_sub_index(d["subs"][sub_indices[0]], sub_indices[1:])
 
-        #populate self.data based on current level
+        #populate self.data based on current level (sub_indices)
         d_at_level = get_sub_index(d,sub_indices) #dictionary @ sub-index level
 
         self.data["first"] = [i[0] for i in d_at_level["corr"]]
@@ -99,21 +100,20 @@ class Graphic():
         self.number_of_entries = len(d_at_level["corr"])
 
         #populate sub-population dot data (if present)
-        self.get_subpop_data(d_at_level)
+        self.populate_dot_data(d_at_level)
 
         #other variables
-        self.number_of_entries = len(self.data["corr"])
-        self.data["rank"] = [i+1 for i in range(0,self.number_of_entries)]
-        self.data["y"] = [-i+1 for i in self.data["rank"]]
+        self.data["rank"] = [i+1 for i in range(0,self.number_of_entries)] #denotes the plot order of the variable pairs
+        self.data["y"] = [-i+1 for i in self.data["rank"]] # y values for plotting bars = -1*rank
 
         #generate annotations for bars
-        self.data["annotation1"] = [self.data["first"][i] for i in range(0,self.number_of_entries)]
-        self.data["annotation2"] = [self.data["second"][i] for i in range(0,self.number_of_entries)]
-        self.data["corr_formatted"] = [round(i,2) for i in self.data["corr"]]
+        self.data["annotation1"] = [self.data["first"][i] for i in range(0,self.number_of_entries)] #bar annotations: first of variable pair
+        self.data["annotation2"] = [self.data["second"][i] for i in range(0,self.number_of_entries)] #bar annotations: 2nd of variable pair
+        self.data["corr_formatted"] = [round(i,2) for i in self.data["corr"]] #bar annotations: rounded correlation value 
 
         #generate x value plotting points for annotations
-        self.data["x_annotations"] = [self.plot_start for i in range(0,self.number_of_entries)]
-        self.data["x_corr"] = [self.data["corr_abs"][i] for i in range(0,self.number_of_entries)]
+        self.data["x_annotations"] = [self.plot_start for i in range(0,self.number_of_entries)] #bar annotations: x position to annotation
+        self.data["x_corr"] = [self.data["corr_abs"][i] for i in range(0,self.number_of_entries)] #bar annotations: x position for corr value
 
         #get number of pos, neg and total correlations 
         self.totals = {"pos":0, "neg":0, "total":0}
@@ -125,35 +125,75 @@ class Graphic():
 
         self.totals["total"] = self.totals["pos"] + self.totals["neg"]
 
-        # with open('out.json', 'w') as f:
-        #     json.dump(self.data, f)
-
+        #convert data dict to form usable by bokeh
         self.source = ColumnDataSource(data=self.data)
 
 
-    def get_subpop_data(self, d_at_level):
+    def populate_dot_data(self, d_at_level):
+        '''populate the various self.data columns, of correlation values for each variable pair corresping to each subpop, s, a single level below'''
 
-        #populate the self.data[s], i.e. correlation values wrt sub-pop (or "NA" is not present)
+        
+        #populate self.data[s] with correlation values for immediate subpopulation level (and populate self.subpops list)
+        self.populate_dot_basic(d_at_level) 
+      
+        #populate self.data[s+"_outliers"] and self.data[s+"_non_outliers"]
+        self.populate_dot_outliers(d_at_level) 
+     
+        #populate self.data[s+"_abs"] and .....
         if "subs" in d_at_level.keys():
+        
+            #populate self.data[s+"_abs"] with correlation values for immediate subpopulation level 
+            for s in self.subpops:
+                self.data[s+"_abs"] = self.new_list(self.data[s], criteria="", apply = "abs" )
+
+            #create s_outlier_pos, s_non_outlier_pos and s_outlier_neg, s_non_outlier_neg
+            for s in self.subpops:
+                self.data[s+"_outlier_pos"] = self.new_list(self.data[s+"_outlier"], criteria=">=0", apply = "abs")
+                self.data[s+"_non_outlier_pos"] = self.new_list(self.data[s+"_non_outlier"], criteria=">=0", apply = "abs")
+
+                self.data[s+"_outlier_neg"] = self.new_list(self.data[s+"_outlier"], criteria="<0", apply = "abs")
+                self.data[s+"_non_outlier_neg"] = self.new_list(self.data[s+"_non_outlier"], criteria="<0", apply = "abs")
+
+
+    def populate_dot_basic(self, d_at_level):
+        '''
+            extract basic correlations for each subpopulation,s, (the immediate level down) populating self.data[s]
+            Note:  
+        '''
+
+        #if d_at_level contains sub-populations, consider each sub-population label, s, in-turn and create an empty list self.data[s] to store sub-pop corr values
+        if "subs" in d_at_level.keys():
+       
+            #
+            #append subpops to self.subpops list, and populate self.data[s] with signed correlation values (order matching higher level variable pair order)
+            #
+            
             for s in d_at_level["subs"].keys():
                 self.subpops.append(s)
                 self.data[s] = []
-                for i in d_at_level["corr"]:
+
+                #iterate through d["corr"] = (variable1, var2, c value, abs c value) at level (i.e. level above sub-populations):
+                #   identify current pair to search for
+                #   assume no info, append "NA"
+                for i in d_at_level["corr"]: #i = (var1, var2, corr, corr_abs)
                     pair_search = (i[0], i[1])
                     self.data[s].append("NA")
-                    for j in d_at_level["subs"][s]["corr"]:
+
+                    #iterate through subpop, s, correlations: find matching variable pair searched for, if match, change "NA" to corr value 
+                    for j in d_at_level["subs"][s]["corr"]: #j = (var1, var2, corr, corr_abs)
                         pair_try = (j[0], j[1])
                         pair_try2 = (j[1], j[0])
                         if pair_search == pair_try or pair_search == pair_try2:
                             self.data[s][-1] = j[2]
                             break
 
-            #corr_abs values for dots:
-            for s in self.subpops:
-                self.data[s+"_abs"] = self.new_list(self.data[s], criteria="", apply = "abs" )
-
-            #create s_outlier and s_non_outlier
-            #
+    def populate_dot_outliers(self, d_at_level):
+        '''
+            use the correlation data from self.data[s], assessing whether for each variable pair, the sub-population variable is an outlier
+            assign outlier values to self.data[s+"_outlier"] and non_outliers to self.data[s+"_non_outlier"]
+        '''
+        
+        if "subs" in d_at_level.keys():
 
             #initialise self.data[s+_outlier]=[] and self.data[s+_non_outlier]=[] for each subpop s 
             for s in self.subpops:
@@ -166,33 +206,29 @@ class Graphic():
                 #assemble list of self.data[s][index] for each s to determine the outliers
                 subpop_corrs_for_variable_pair = [self.data[s][index] for s in self.subpops] #these values could all be "NA"
 
-                if len([i for i in subpop_corrs_for_variable_pair if i != "NA"]) > 0:
+                #if more than 2 subpops, find ub and lb correlation values for variable pair 
+                if len([i for i in subpop_corrs_for_variable_pair if i != "NA"]) > 2:
                     lb, ub = self.outliers(subpop_corrs_for_variable_pair)
                 else:
                     lb = None; ub = None
 
+                #use outlier ub and lb boundary values to test whether subpop corr value (for given var pair) is and outlier - populate accordingly 
                 for s in self.subpops:
                     item = self.data[s][index]
                     if item == "NA":
                         self.data[s+"_outlier"].append("NA")
                         self.data[s+"_non_outlier"].append("NA")
                     else:
-                        if item > ub or item < lb:
-                            self.data[s+"_outlier"].append(item)
-                            self.data[s+"_non_outlier"].append("NA")
+                        if ub and lb:
+                            if item > ub or item < lb:
+                                self.data[s+"_outlier"].append(item)
+                                self.data[s+"_non_outlier"].append("NA")
+                            else:
+                                self.data[s+"_outlier"].append("NA")
+                                self.data[s+"_non_outlier"].append(item)
                         else:
                             self.data[s+"_outlier"].append("NA")
                             self.data[s+"_non_outlier"].append(item)
-
-            #
-            #create s_outlier_pos, s_non_outlier_pos and s_outlier_neg, s_non_outlier_neg
-            #     
-            for s in self.subpops:
-                self.data[s+"_outlier_pos"] = self.new_list(self.data[s+"_outlier"], criteria=">=0", apply = "abs")
-                self.data[s+"_non_outlier_pos"] = self.new_list(self.data[s+"_non_outlier"], criteria=">=0", apply = "abs")
-
-                self.data[s+"_outlier_neg"] = self.new_list(self.data[s+"_outlier"], criteria="<0", apply = "abs")
-                self.data[s+"_non_outlier_neg"] = self.new_list(self.data[s+"_non_outlier"], criteria="<0", apply = "abs")
 
 
     def new_list(self,reference_list,criteria = "", apply = None):
@@ -235,9 +271,14 @@ class Graphic():
         colours_used = 0
 
         for s in self.subpops:
-            if len([i for i in self.data[s+"_outlier"] if i != "NA"])>0:
+            if len([i for i in self.data[s+"_outlier"] if i != "NA"])>0: #i.e. if outliers in sub-pop
                 self.colours[s] = available_colours[colours_used]
                 colours_used += 1
+
+                #handle case where number of outliers is greater than number of possible colours - recycle 
+                if colours_used == len(available_colours):
+                    colours_used = 0
+            
             else:
                 self.colours[s] = "lightgrey"
 
@@ -258,7 +299,7 @@ class Graphic():
 
     def generate(self, tab="all", by = "descending"):
 
-        ##amend self.data and output new self.source depending on 
+        ##generate bokeh figure for current tab selection
         if tab == "positive":
             df = pd.DataFrame.from_dict(self.data)
             self.data=df[df["corr"] >= 0.0].to_dict("list")
