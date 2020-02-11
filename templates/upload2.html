@@ -67,7 +67,7 @@
             <label class="switch">subpopulations
             <form action="/upload2">
               {% if column_header_start!="No subpopulations" %}
-                from
+                columns 
               {% endif %}
                 <select size="1" name="column_header_start" onchange='{ this.form.submit();}'> 
                   {% for y in ["No subpopulations",1] %}

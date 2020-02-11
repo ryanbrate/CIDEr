@@ -36,7 +36,7 @@ def backend(file, row_indices, column_indices, time_column=None, start_time=None
     # Level 0
 
     level_0 = {}
-    corr_matrix =  df.corr()
+    corr_matrix =  df.corr("spearman")
     corr_matrix = corr_matrix.where(np.triu(np.ones(corr_matrix.shape)).astype(np.bool))
     result = round(corr_matrix[(corr_matrix < 1) & (abs(corr_matrix) > threshold)].unstack().sort_values(ascending=False).dropna(), decimals)
     first = [i[0] for i in result.keys()] 
@@ -54,7 +54,7 @@ def backend(file, row_indices, column_indices, time_column=None, start_time=None
             sub_column = df.columns[0]    
             mask = df[df[sub_column] == sub]
             mask_categories = mask[mask.columns[1]].unique()
-            corr_matrix =  mask.corr()
+            corr_matrix =  mask.corr("spearman")
             corr_matrix = corr_matrix.where(np.triu(np.ones(corr_matrix.shape)).astype(np.bool))
             result = round(corr_matrix[(corr_matrix < 1) & (abs(corr_matrix) > threshold)].unstack().sort_values(ascending=False).dropna(), decimals)
             first = [i[0] for i in result.keys()] 
@@ -71,7 +71,7 @@ def backend(file, row_indices, column_indices, time_column=None, start_time=None
                     dictionary2 = {}
                     sub_column = df.columns[1]    
                     mask = df[df[sub_column] == sub2]
-                    corr_matrix =  mask.corr()
+                    corr_matrix =  mask.corr("spearman")
                     corr_matrix = corr_matrix.where(np.triu(np.ones(corr_matrix.shape)).astype(np.bool))
                     result = round(corr_matrix[(corr_matrix < 1) & (abs(corr_matrix) > threshold)].unstack().sort_values(ascending=False).dropna(), decimals)
                     first = [i[0] for i in result.keys()] 

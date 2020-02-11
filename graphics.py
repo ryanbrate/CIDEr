@@ -38,7 +38,6 @@ class Graphic():
         #plot properties
         self.bar_scale = 0.5 #relative scale of bars
 
-
     def reset(self):
         '''
             run by self.get_data(), i.e. reset all object variables prior to populating with new values
@@ -47,7 +46,7 @@ class Graphic():
         self.subpops = []
         self.colours = {}
 
-        self.totals = {}
+        self.totals = {} 
 
         self.number_of_entries = None
         self.min_corr_abs = None
@@ -239,6 +238,7 @@ class Graphic():
                 reference_list:     The base list, from which values are incorporated if criteria met, otherwise "NA" appended to new list
                 critera:            Inclusion criteria, as a string, e.g. ">=0"
                 apply:              function to apply to reference_list values
+            return: the newly created list
         '''
 
         new = []
@@ -287,6 +287,7 @@ class Graphic():
             return (lowerbound, upperbound) i.e. the boundaries outside which elements in the data set are deemed outliers
             Args:
                 dataset:   a list of values
+            return: (lb, ub) , the lowerbound and upperbound non-outlier ranges
         '''
         dataset = [d for d in dataset if d!="NA"]
 
@@ -459,18 +460,23 @@ class Graphic():
     def get_subs(self):
         '''
             return a list of sub-populations 1 layer deep wrt current view and a list of associated colours
+        return: a list of the (most immediate) subpopulations below the current index level
         '''
 
         return self.subpops
 
 
     def get_colours(self):
-
+        '''
+            return: the dictionary of subpopulation colours
+        '''
         return self.colours
 
 
     def get_totals(self):
-
+        '''
+           return: the dict of postive, negative and total correlations for the currnet index level 
+        '''
         return self.totals
 
 
