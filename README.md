@@ -12,12 +12,14 @@ A prototype flask app for visualising data relationships in complex datasets
 
 3) recreate the locked python dependency environment
 
-  pipenv install --ignore-pipfile
+  pipenv install
 
-4) run the app (via the terminal)
+#Running the app once installed
+1) open terminal in project folder
+2) run in terminal ....
 
   pipenv shell
 
   python3 app.py
 
-5) navigate to localhost address (see terminal output for location)
+3) navigate to localhost address (see terminal output for location)
