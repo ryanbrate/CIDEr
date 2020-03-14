@@ -8,7 +8,7 @@ A prototype flask app for visualising data relationships in complex datasets
   
 2) Navigate to folder
 
-   cd CIDEr
+  cd CIDEr
 
 3) recreate the locked python dependency environment
 
