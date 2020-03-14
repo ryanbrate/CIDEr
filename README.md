@@ -10,10 +10,10 @@ git clone https://github.com/ryanbrate/CIDEr.git
 
 pipenv install --ignore-pipfile
 
-3)run the app
+3) run the app (via the terminal)
 
 pipenv shell
 
 python3 app.py
 
-4)navigate to localhost address
+4) navigate to localhost address
