@@ -12,6 +12,8 @@ A prototype flask app for visualising data relationships in complex datasets
 
 3) run the app (via the terminal)
 
+  cd CIDEr
+
   pipenv shell
 
   python3 app.py
