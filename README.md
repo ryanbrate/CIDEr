@@ -1,5 +1,6 @@
 # CIDEr
 A prototype flask app for visualising data relationships in complex datasets
+CREDIT: Chris, Semme, Shi and myself
 
 #Installation
 1) clone the github repo
