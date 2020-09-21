@@ -1,5 +1,5 @@
 # CIDEr
-A prototype flask/ Bokeh app for visualising data relationships in multi-index datasets. Produced to meet the fffact.nl client brief
+A prototype Flask/ Bokeh app for visualising data relationships in multi-index datasets. Produced to meet the fffact.nl client brief
 Intended as an exploratory tool, for identifying interest cases in a complex multi-index dataset.
 I.e.,
 - handle multi-index data sets: sub-index auto-detection, zooming to sub-index via side bar
